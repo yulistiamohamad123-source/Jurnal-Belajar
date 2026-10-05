@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jurnal & Refleksi Belajar Matematika Bimbel</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Poppins & Bubblegum Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 50%, #e0f7fa 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .font-bubblegum {
+            font-family: 'Bubblegum Sans', cursive;
+        }
+
+        /* Glassmorphism Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+
+        .glass-input {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .glass-input:focus {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+            outline: none;
+        }
+
+        /* Floating Math Shapes Background Decoration */
+        .math-shape {
+            position: fixed;
+            opacity: 0.12;
+            z-index: 0;
+            animation: float 20s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(180deg); }
+        }
+
+        /* Mood Selector Animation */
+        .mood-btn {
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .mood-btn.selected {
+            transform: scale(1.12);
+            background-color: #f3e8ff;
+            border-color: #a855f7;
+            box-shadow: 0 10px 15px -3px rgba(168, 85, 247, 0.3);
+        }
+
+        .star-rating {
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating.active {
+            color: #fbbf24;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c084fc;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="relative overflow-x-hidden text-slate-700 pb-12">
+
+    <!-- Decorative Math Background Floating Elements -->
+    <i class="fa-solid fa-square-root-variable math-shape text-purple-600 text-8xl top-10 left-10" style="animation-delay: 0s;"></i>
+    <i class="fa-solid fa-pi math-shape text-blue-600 text-9xl top-1/3 right-12" style="animation-delay: 2s;"></i>
+    <i class="fa-solid fa-shapes math-shape text-teal-600 text-8xl bottom-20 left-16" style="animation-delay: 4s;"></i>
+    <i class="fa-solid fa-chart-line math-shape text-indigo-600 text-8xl bottom-1/3 right-1/4" style="animation-delay: 1s;"></i>
+
+    <div class="max-w-3xl mx-auto px-4 py-8 relative z-10">
+
+        <!-- Header Section -->
+        <header class="text-center mb-8">
+            <div class="inline-block bg-white/70 px-4 py-1.5 rounded-full text-purple-700 font-semibold text-sm mb-3 shadow-sm border border-purple-100">
+                ✨ Bimbel Matematika Kelas VIII ✨
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-800 font-bubblegum tracking-wide drop-shadow-sm">
+                Jurnal & Refleksi Belajar 📐
+            </h1>
+            <p class="text-slate-600 text-sm md:text-base mt-2 max-w-lg mx-auto">
+                Yuk catat perjalanan belajarmu hari ini! Suaramu sangat berharga untuk membuat matematika jadi lebih seru dan mudah.
+            </p>
+        </header>
+
+        <!-- Daily Motivation Card -->
+        <div class="glass-card rounded-2xl p-5 mb-8 border-l-4 border-l-purple-500 flex items-center gap-4">
+            <div class="bg-purple-100 text-purple-600 p-3.5 rounded-2xl text-2xl flex-shrink-0">
+                💡
+            </div>
+            <div>
+                <h3 class="text-xs uppercase font-bold text-purple-600 tracking-wider">Motivasi Hari Ini</h3>
+                <p id="quote-text" class="text-slate-700 text-sm italic font-medium mt-0.5">
+                    "Matematika bukan tentang menghafal rumus, melainkan tentang cara melatih otak kita untuk berpikir logis!"
+                </p>
+            </div>
+        </div>
+
+        <!-- Main Form Container -->
+        <form id="journal-form" class="space-y-6">
+
+            <!-- Identitas Siswa -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-user-graduate text-purple-500"></i> Identitas Diri
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">Nama Lengkap Siswa</label>
+                        <input type="text" id="student-name" required placeholder="Masukkan nama kamu..." 
+                            class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 placeholder-slate-400 font-medium">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-2">Tanggal / Pertemuan</label>
+                        <input type="date" id="journal-date" required 
+                            class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 font-medium">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pertanyaan 1: Hari Ini Belajar Apa? -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <label class="text-lg font-bold text-slate-800 mb-2 block flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-blue-500"></i> 1. Hari ini belajar materi apa?
+                </label>
+                <p class="text-xs text-slate-500 mb-4">Pilih topik materi Kelas VIII yang kamu pelajari hari ini:</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-4">
+                    <button type="button" onclick="selectTopic(this, 'Pola Bilangan')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        🔢 Pola Bilangan
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Koordinat Kartesius')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        📍 Koordinat Kartesius
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Relasi & Fungsi')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        🔀 Relasi & Fungsi
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Persamaan Garis Lurus (PGL)')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        📈 Persamaan Garis (PGL)
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'SPLDV (Persamaan Linear 2 Variabel)')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        ⚖️ SPLDV
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Teorema Pythagoras')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        📐 Pythagoras
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Lingkaran & Unsur-unsurnya')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        ⭕ Lingkaran
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Bangun Ruang Sisi Datar')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        📦 Bangun Ruang
+                    </button>
+                    <button type="button" onclick="selectTopic(this, 'Statistika & Peluang')" class="topic-btn border border-slate-200 bg-white/70 hover:bg-purple-50 text-slate-700 p-2.5 rounded-xl text-xs font-semibold text-center transition">
+                        📊 Statistika & Peluang
+                    </button>
+                </div>
+
+                <input type="text" id="custom-topic" placeholder="Atau ketik judul materi kustom / spesifik di sini..." 
+                    class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 text-sm font-medium">
+            </div>
+
+            <!-- Pertanyaan 2: Apa yang Kamu Pahami? -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <label class="text-lg font-bold text-slate-800 mb-2 block flex items-center gap-2">
+                    <i class="fa-solid fa-brain text-emerald-500"></i> 2. Tingkat Pemahaman Kamu
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Berikan rating sejauh mana kamu memahami materi tadi:</p>
+                
+                <!-- Star Rating System -->
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="flex text-2xl gap-1">
+                        <i class="fa-solid fa-star star-rating" onclick="setRating(1)"></i>
+                        <i class="fa-solid fa-star star-rating" onclick="setRating(2)"></i>
+                        <i class="fa-solid fa-star star-rating" onclick="setRating(3)"></i>
+                        <i class="fa-solid fa-star star-rating" onclick="setRating(4)"></i>
+                        <i class="fa-solid fa-star star-rating" onclick="setRating(5)"></i>
+                    </div>
+                    <span id="rating-label" class="text-xs font-bold text-purple-600 bg-purple-100 px-3 py-1 rounded-full ml-2">
+                        Pilih Bintang
+                    </span>
+                </div>
+
+                <textarea id="understanding-text" rows="3" required placeholder="Tuliskan poin penting/rumus/konsep yang berhasil kamu pahami hari ini..."
+                    class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 text-sm font-medium resize-none"></textarea>
+            </div>
+
+            <!-- Pertanyaan 3: Mood & Perasaan -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <label class="text-lg font-bold text-slate-800 mb-2 block flex items-center gap-2">
+                    <i class="fa-solid fa-face-smile text-amber-500"></i> 3. Perasaan Setelah Belajar
+                </label>
+                <p class="text-xs text-slate-500 mb-4">Pilih mood kamu setelah mengikuti sesi bimbel hari ini:</p>
+
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+                    <button type="button" onclick="selectMood('Paham & Senang', '😁', 'Luar biasa! Pertahankan semangat belajarmu ya! 🚀', this)" 
+                        class="mood-btn border-2 border-slate-200 bg-white/70 p-3 rounded-2xl flex flex-col items-center gap-1.5 hover:bg-purple-50">
+                        <span class="text-3xl">😁</span>
+                        <span class="text-xs font-semibold text-slate-700">Senang & Paham</span>
+                    </button>
+                    <button type="button" onclick="selectMood('Puas & Yakin', '😎', 'Keren! Kamu makin menguasai matematika! 💪', this)" 
+                        class="mood-btn border-2 border-slate-200 bg-white/70 p-3 rounded-2xl flex flex-col items-center gap-1.5 hover:bg-purple-50">
+                        <span class="text-3xl">😎</span>
+                        <span class="text-xs font-semibold text-slate-700">Puas & Yakin</span>
+                    </button>
+                    <button type="button" onclick="selectMood('Masih Bingung', '😕', 'Tidak apa-apa! Matematika butuh proses, besok kita ulangi bagian sulitnya ya! 🤗', this)" 
+                        class="mood-btn border-2 border-slate-200 bg-white/70 p-3 rounded-2xl flex flex-col items-center gap-1.5 hover:bg-purple-50">
+                        <span class="text-3xl">😕</span>
+                        <span class="text-xs font-semibold text-slate-700">Agak Bingung</span>
+                    </button>
+                    <button type="button" onclick="selectMood('Lelah', '😴', 'Istirahat yang cukup ya! Kamu sudah berusaha keras hari ini! ☕', this)" 
+                        class="mood-btn border-2 border-slate-200 bg-white/70 p-3 rounded-2xl flex flex-col items-center gap-1.5 hover:bg-purple-50">
+                        <span class="text-3xl">😴</span>
+                        <span class="text-xs font-semibold text-slate-700">Lelah</span>
+                    </button>
+                    <button type="button" onclick="selectMood('Butuh Latihan', '🤔', 'Mantap! Membutuhkan banyak latihan adalah kunci mahir matematika! 📝', this)" 
+                        class="mood-btn border-2 border-slate-200 bg-white/70 p-3 rounded-2xl flex flex-col items-center gap-1.5 hover:bg-purple-50 col-span-2 sm:col-span-1">
+                        <span class="text-3xl">🤔</span>
+                        <span class="text-xs font-semibold text-slate-700">Butuh Latihan</span>
+                    </button>
+                </div>
+
+                <!-- Interactive Feedback Alert -->
+                <div id="mood-feedback" class="hidden p-3.5 bg-gradient-to-r from-purple-100 to-indigo-100 border border-purple-200 rounded-xl text-purple-800 text-xs font-semibold flex items-center gap-2">
+                    <span class="text-base">💬</span>
+                    <span id="mood-feedback-text">Pesan motivasi akan muncul di sini...</span>
+                </div>
+            </div>
+
+            <!-- Pertanyaan 4: Saran untuk Guru -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <label class="text-lg font-bold text-slate-800 mb-2 block flex items-center gap-2">
+                    <i class="fa-solid fa-chalkboard-user text-rose-500"></i> 4. Saran untuk Guru Bimbel
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Bagaimana metode mengajar hari ini? Ada masukan agar belajar lebih seru?</p>
+                <textarea id="teacher-feedback" rows="2" placeholder="Contoh: Penjelasannya sudah jelas, tapi kalau bisa perbanyak contoh soal cerita ya Kak..."
+                    class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 text-sm font-medium resize-none"></textarea>
+            </div>
+
+            <!-- Pertanyaan 5: Saran Materi Selanjutnya -->
+            <div class="glass-card rounded-3xl p-6 md:p-8">
+                <label class="text-lg font-bold text-slate-800 mb-2 block flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> 5. Usulan / Target Pertemuan Berikutnya
+                </label>
+                <p class="text-xs text-slate-500 mb-3">Materi atau bab apa yang ingin kamu pelajari / bedah soal pada pertemuan depan?</p>
+                <textarea id="next-topic-feedback" rows="2" placeholder="Contoh: Ingin bahas latihan soal PR sekolah bab SPLDV atau bedah soal ujian..."
+                    class="w-full px-4 py-3 rounded-xl glass-input text-slate-800 text-sm font-medium resize-none"></textarea>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center pt-2">
+                <button type="submit" 
+                    class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-bold text-base rounded-2xl shadow-xl hover:shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 mx-auto">
+                    <i class="fa-solid fa-paper-plane text-lg"></i> Simpan & Lihat Ringkasan
+                </button>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- Modal Ringkasan Refleksi -->
+    <div id="summary-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl overflow-y-auto max-h-[90vh] border border-purple-100 relative animate-fade-in">
+            
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-600 p-2 text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">
+                    🎉
+                </div>
+                <h3 class="text-2xl font-bold font-bubblegum text-slate-800">Refleksi Berhasil Disimpan!</h3>
+                <p class="text-xs text-slate-500">Berikut adalah ringkasan jurnal belajar kamu hari ini:</p>
+            </div>
+
+            <!-- Preview Card -->
+            <div id="modal-summary-content" class="bg-slate-50 rounded-2xl p-5 border border-slate-200 text-xs md:text-sm space-y-3 text-slate-700 mb-6">
+                <!-- Content generated via JavaScript -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button onclick="copyToClipboard()" 
+                    class="px-4 py-3 bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold rounded-xl text-xs flex items-center justify-center gap-2 transition">
+                    <i class="fa-regular fa-copy text-base"></i> Salin Teks Jawaban
+                </button>
+                <button onclick="sendViaWhatsApp()" 
+                    class="px-4 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow-lg transition">
+                    <i class="fa-brands fa-whatsapp text-lg"></i> Kirim ke Guru Bimbel
+                </button>
+            </div>
+
+            <div class="mt-3 text-center">
+                <button onclick="window.print()" class="text-xs text-slate-400 hover:text-slate-600 underline">
+                    <i class="fa-solid fa-print"></i> Cetak Halaman Ini / Simpan PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white text-xs px-5 py-3 rounded-xl shadow-xl hidden transition-all duration-300 z-50">
+        <span id="toast-message">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        // Set Default Date to Today
+        document.getElementById('journal-date').valueAsDate = new Date();
+
+        // State Variables
+        let selectedTopic = "";
+        let selectedRating = 0;
+        let selectedMood = { name: "", emoji: "" };
+
+        // Quotes Generator
+        const mathQuotes = [
+            '"Matematika bukan tentang menghafal rumus, melainkan tentang cara melatih otak kita untuk berpikir logis!"',
+            '"Setiap masalah matematika pasti punya solusi, begitu juga tantangan dalam hidup!" 🌟',
+            '"Kesalahan saat latihan matematika adalah langkah pertama menuju pemahaman yang lebih dalam!" 💡',
+            '"Matematika adalah bahasa terindah yang digunakan alam semesta!" 🌌'
+        ];
+        document.getElementById('quote-text').innerText = mathQuotes[Math.floor(Math.random() * mathQuotes.length)];
+
+        // Select Topic Logic
+        function selectTopic(buttonElement, topicName) {
+            document.querySelectorAll('.topic-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white', 'border-purple-600');
+                btn.classList.add('bg-white/70', 'text-slate-700', 'border-slate-200');
+            });
+
+            buttonElement.classList.remove('bg-white/70', 'text-slate-700', 'border-slate-200');
+            buttonElement.classList.add('bg-purple-600', 'text-white', 'border-purple-600');
+
+            selectedTopic = topicName;
+            document.getElementById('custom-topic').value = topicName;
+        }
+
+        // Rating Stars Logic
+        function setRating(rating) {
+            selectedRating = rating;
+            const stars = document.querySelectorAll('.star-rating');
+            const labels = ["Sangat Sulit 😅", "Agak Sulit 🤔", "Cukup Paham 👍", "Paham Banget 😊", "Sangat Menguasai! 🚀"];
+
+            stars.forEach((star, index) => {
+                if (index < rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+
+            document.getElementById('rating-label').innerText = labels[rating - 1];
+        }
+
+        // Mood Selection Logic
+        function selectMood(moodName, emoji, feedbackMessage, element) {
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            element.classList.add('selected');
+
+            selectedMood = { name: moodName, emoji: emoji };
+
+            const feedbackBox = document.getElementById('mood-feedback');
+            const feedbackText = document.getElementById('mood-feedback-text');
+            
+            feedbackText.innerText = feedbackMessage;
+            feedbackBox.classList.remove('hidden');
+        }
+
+        // Form Submit Handler
+        document.getElementById('journal-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('student-name').value;
+            const date = document.getElementById('journal-date').value;
+            const topic = document.getElementById('custom-topic').value || selectedTopic || "Materi Umum";
+            const understanding = document.getElementById('understanding-text').value;
+            const teacherFeedback = document.getElementById('teacher-feedback').value || "-";
+            const nextTopic = document.getElementById('next-topic-feedback').value || "-";
+
+            if (!selectedMood.name) {
+                showToast("Silakan pilih mood kamu setelah belajar ya!");
+                return;
+            }
+
+            // Trigger Confetti Animation
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // Format Modal Content
+            const summaryHTML = `
+                <p><strong>👤 Nama:</strong> ${name}</p>
+                <p><strong>📅 Tanggal:</strong> ${date} (Kelas VIII)</p>
+                <hr class="my-2 border-slate-200">
+                <p><strong>📚 Materi Hari Ini:</strong> ${topic}</p>
+                <p><strong>⭐ Level Pemahaman:</strong> ${selectedRating}/5 Star (${document.getElementById('rating-label').innerText})</p>
+                <p><strong>💡 Rangkuman Pemahaman:</strong> ${understanding}</p>
+                <p><strong>🎭 Perasaan/Mood:</strong> ${selectedMood.emoji} ${selectedMood.name}</p>
+                <p><strong>💬 Saran untuk Guru:</strong> ${teacherFeedback}</p>
+                <p><strong>🚀 Usulan Materi Selanjutnya:</strong> ${nextTopic}</p>
+            `;
+
+            document.getElementById('modal-summary-content').innerHTML = summaryHTML;
+            document.getElementById('summary-modal').classList.remove('hidden');
+        });
+
+        function closeModal() {
+            document.getElementById('summary-modal').classList.add('hidden');
+        }
+
+        // Copy Text Function for Easy Sharing
+        function copyToClipboard() {
+            const name = document.getElementById('student-name').value;
+            const date = document.getElementById('journal-date').value;
+            const topic = document.getElementById('custom-topic').value || selectedTopic || "Materi Umum";
+            const understanding = document.getElementById('understanding-text').value;
+            const teacherFeedback = document.getElementById('teacher-feedback').value || "-";
+            const nextTopic = document.getElementById('next-topic-feedback').value || "-";
+
+            const formattedText = 
+`✨ *JURNAL BELAJAR MATEMATIKA BIMBEL* ✨
+👤 *Nama:* ${name} (Kelas VIII)
+📅 *Tanggal:* ${date}
+
+📚 *Materi Belajar:* ${topic}
+⭐ *Tingkat Pemahaman:* ${selectedRating}/5 Star
+💡 *Apa yang Dipahami:* 
+${understanding}
+
+🎭 *Perasaan Setelah Belajar:* ${selectedMood.emoji} ${selectedMood.name}
+💬 *Saran untuk Guru:* ${teacherFeedback}
+🚀 *Materi Berikutnya:* ${nextTopic}`;
+
+            // Fallback for iFrame clipboard restriction
+            const textarea = document.createElement('textarea');
+            textarea.value = formattedText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+
+            showToast("Teks hasil refleksi berhasil disalin!");
+        }
+
+        // Send via WhatsApp Function
+        function sendViaWhatsApp() {
+            const name = document.getElementById('student-name').value;
+            const date = document.getElementById('journal-date').value;
+            const topic = document.getElementById('custom-topic').value || selectedTopic || "Materi Umum";
+            const understanding = document.getElementById('understanding-text').value;
+            const teacherFeedback = document.getElementById('teacher-feedback').value || "-";
+            const nextTopic = document.getElementById('next-topic-feedback').value || "-";
+
+            const formattedText = encodeURIComponent(
+`✨ *JURNAL BELAJAR MATEMATIKA BIMBEL* ✨
+👤 *Nama:* ${name} (Kelas VIII)
+📅 *Tanggal:* ${date}
+
+📚 *Materi Belajar:* ${topic}
+⭐ *Tingkat Pemahaman:* ${selectedRating}/5 Star
+💡 *Apa yang Dipahami:* ${understanding}
+
+🎭 *Perasaan Setelah Belajar:* ${selectedMood.emoji} ${selectedMood.name}
+💬 *Saran untuk Guru:* ${teacherFeedback}
+🚀 *Materi Berikutnya:* ${nextTopic}`
+            );
+
+            window.open(`https://wa.me/?text=${formattedText}`, '_blank');
+        }
+
+        // Custom Toast Message
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
